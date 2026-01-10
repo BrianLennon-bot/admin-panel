@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-20px, -20px) rotate(360deg); }
+        }
+
+        .login-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-header p {
+            font-size: 14px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-header i {
+            font-size: 50px;
+            margin-bottom: 20px;
+            display: block;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-form {
+            padding: 40px 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-size: 18px;
+        }
+
+        .input-with-icon input {
+            width: 100%;
+            padding: 15px 15px 15px 50px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: #f9f9f9;
+        }
+
+        .input-with-icon input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+
+        .input-with-icon input.error {
+            border-color: #f44336;
+            background: #fff5f5;
+        }
+
+        .input-with-icon input.error:focus {
+            box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.1);
+        }
+
+        .show-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 5px;
+        }
+
+        .show-password:hover {
+            color: #4CAF50;
+        }
+
+        .error-message {
+            color: #f44336;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(76, 175, 80, 0.3);
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        .login-button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .login-button i {
+            font-size: 18px;
+        }
+
+        .security-info {
+            margin-top: 25px;
+            padding: 15px;
+            background: #f0f8ff;
+            border-radius: 8px;
+            border-left: 4px solid #2196F3;
+        }
+
+        .security-info h4 {
+            color: #2196F3;
+            font-size: 14px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .security-info p {
+            color: #666;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .security-info ul {
+            list-style: none;
+            margin-top: 8px;
+        }
+
+        .security-info li {
+            color: #666;
+            font-size: 12px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .security-info li i {
+            color: #4CAF50;
+            font-size: 10px;
+        }
+
+        .loader {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .login-footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 12px;
+        }
+
+        .login-footer a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .login-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Notificaciones */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateX(150%);
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+        }
+
+        .notification.error {
+            background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+        }
+
+        .notification.warning {
+            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+        }
+
+        .notification i {
+            font-size: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .login-container {
+                max-width: 100%;
+                border-radius: 15px;
+            }
+
+            .login-header {
+                padding: 30px 20px;
+            }
+
+            .login-header h1 {
+                font-size: 24px;
+            }
+
+            .login-form {
+                padding: 30px 20px;
+            }
+
+            .input-with-icon input {
+                padding: 14px 14px 14px 45px;
+            }
+        }
+
+        /* Efecto de carga */
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+
+        .loading-shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite linear;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <i class="fas fa-lock"></i>
+            <h1>Panel de Administración</h1>
+            <p>Acceso restringido - Solo personal autorizado</p>
+        </div>
+
+        <form class="login-form" id="loginForm">
+            <div class="form-group">
+                <label for="username">Usuario</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-user"></i>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        placeholder="Ingresa tu usuario"
+                        autocomplete="username"
+                        required
+                        minlength="3"
+                        maxlength="50"
+                        value="admin"> <!-- Valor por defecto para pruebas -->
+                </div>
+                <div class="error-message" id="usernameError"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-key"></i>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        placeholder="Ingresa tu contraseña"
+                        autocomplete="current-password"
+                        required
+                        minlength="6"
+                        maxlength="100"
+                        value="admin123"> <!-- Valor por defecto para pruebas -->
+                </div>
+                <div class="error-message" id="passwordError"></div>
+            </div>
+
+            <button type="submit" class="login-button" id="loginButton">
+                <span id="buttonText">Iniciar Sesión</span>
+                <div class="loader" id="buttonLoader"></div>
+            </button>
+
+            <!-- Agregar botón de prueba -->
+            <div style="text-align: center; margin-top: 15px;">
+                <button type="button" id="testBackendBtn" style="
+                    background: #2196F3;
+                    color: white;
+                    border: none;
+                    padding: 8px 16px;
+                    border-radius: 5px;
+                    cursor: pointer;
+                ">
+                    <i class="fas fa-plug"></i> Probar Conexión Backend
+                </button>
+            </div>
+
+            <div class="security-info">
+                <h4><i class="fas fa-shield-alt"></i> Medidas de Seguridad</h4>
+                <p>Este sistema implementa múltiples capas de protección:</p>
+                <ul>
+                    <li><i class="fas fa-check-circle"></i> Autenticación segura con BCrypt</li>
+                    <li><i class="fas fa-check-circle"></i> Validación contra inyección SQL</li>
+                    <li><i class="fas fa-check-circle"></i> Protección CSRF habilitada</li>
+                    <li><i class="fas fa-check-circle"></i> Rate limiting activado</li>
+                </ul>
+            </div>
+        </form>
+
+        <div class="login-footer">
+            <p>© 2024 TiendaOnline - Panel Administrativo</p>
+            <p>Desarrollado por: <a href="tel:+5354238802">Brian Lennon De Cárdenas Amador</a></p>
+            <p style="font-size: 11px; margin-top: 10px; color: #888;">
+                <strong>Modo:</strong> 
+                <span id="currentMode">Desconocido</span> | 
+                <strong>URL Backend:</strong> 
+                <span id="backendUrl">Desconocida</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- Notificaciones -->
+    <div class="notification" id="notification"></div>
+
+    <script>
+        // Configuración CORREGIDA
+        const API_BASE_URL = 'http://localhost:8080/admin-api';
+        
+        // Detectar si estamos en localhost o file://
+        function detectEnvironment() {
+            const modeElement = document.getElementById('currentMode');
+            const urlElement = document.getElementById('backendUrl');
+            
+            if (window.location.protocol === 'file:') {
+                modeElement.textContent = 'FILE (NO RECOMENDADO)';
+                modeElement.style.color = 'red';
+                showNotification('⚠️ Estás en modo FILE://. Usa un servidor web (localhost:5500)', 'warning');
+                return 'file';
+            } else if (window.location.hostname === 'localhost' || 
+                        window.location.hostname === '127.0.0.1') {
+                modeElement.textContent = 'LOCALHOST (CORRECTO)';
+                modeElement.style.color = 'green';
+                urlElement.textContent = API_BASE_URL;
+                return 'localhost';
+            } else {
+                modeElement.textContent = 'OTRO';
+                return 'other';
+            }
+        }
+        
+        // Prueba de conexión al backend
+        async function testBackendConnection() {
+            showNotification('🔍 Probando conexión con backend...', 'info');
+            setLoading(true, 'testBackendBtn');
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/test`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    },
+                    mode: 'cors'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('✅ Backend respondió:', data);
+                    showNotification(`✅ Backend funcionando: ${data.message}`, 'success');
+                    return true;
+                } else {
+                    const errorText = await response.text();
+                    console.error('❌ Backend error:', response.status, errorText);
+                    showNotification(`❌ Backend error ${response.status}: ${errorText}`, 'error');
+                    return false;
+                }
+            } catch (error) {
+                console.error('❌ Error de conexión:', error);
+                showNotification(`❌ No se pudo conectar: ${error.message}`, 'error');
+                return false;
+            } finally {
+                setLoading(false, 'testBackendBtn');
+            }
+        }
+        
+        // Prueba de login
+        async function testLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            showNotification('🔐 Probando login...', 'info');
+            setLoading(true, 'loginButton');
+            
+            try {
+                console.log('Enviando login a:', `${API_BASE_URL}/auth/login`);
+                console.log('Credenciales:', { username, password: '***' });
+                
+                const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    mode: 'cors',
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    })
+                });
+                
+                console.log('Respuesta status:', response.status);
+                console.log('Respuesta headers:', [...response.headers.entries()]);
+                
+                let data;
+                try {
+                    data = await response.json();
+                    console.log('Respuesta JSON:', data);
+                } catch (e) {
+                    const text = await response.text();
+                    console.log('Respuesta texto:', text);
+                    throw new Error(`No se pudo parsear JSON: ${text.substring(0, 100)}`);
+                }
+                
+                if (response.ok && data.success) {
+                    showNotification(`✅ Login exitoso: ${data.message}`, 'success');
+                    console.log('Token recibido:', data.token);
+                    console.log('Admin info:', data.admin);
+                    
+                    // Guardar en localStorage para pruebas
+                    if (data.token) {
+                        localStorage.setItem('test_token', data.token);
+                        localStorage.setItem('test_admin', JSON.stringify(data.admin));
+                        console.log('Datos guardados en localStorage');
+
+                        setTimeout(() => {
+                            window.location.href = 'dashboard.html';
+                        }, 1000);
+                    }
+                    
+                    return true;
+                } else {
+                    showNotification(`❌ Login falló: ${data.message || 'Error desconocido'}`, 'error');
+                    return false;
+                }
+                
+            } catch (error) {
+                console.error('🔥 Error completo:', error);
+                showNotification(`❌ Error: ${error.message}`, 'error');
+                return false;
+            } finally {
+                setLoading(false, 'loginButton');
+            }
+        }
+
+        // Cuando carga la página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Detectar entorno
+            const env = detectEnvironment();
+            console.log('Entorno detectado:', env);
+            console.log('URL actual:', window.location.href);
+            console.log('Backend URL:', API_BASE_URL);
+            
+            // Configurar eventos
+            setupEventListeners();
+            
+            // Auto-focus en el primer campo
+            document.getElementById('username').focus();
+            
+            // Si estamos en localhost, probar conexión automáticamente
+            if (env === 'localhost') {
+                setTimeout(() => {
+                    testBackendConnection();
+                }, 1000);
+            }
+        });
+
+        // Configurar event listeners
+        function setupEventListeners() {
+            const form = document.getElementById('loginForm');
+            const showPasswordBtn = document.getElementById('showPassword');
+            const passwordInput = document.getElementById('password');
+            const testBackendBtn = document.getElementById('testBackendBtn');
+            
+            // Mostrar/ocultar contraseña
+            if (showPasswordBtn) {
+                showPasswordBtn.addEventListener('click', function() {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    this.innerHTML = type === 'password' ? 
+                        '<i class="fas fa-eye"></i>' : 
+                        '<i class="fas fa-eye-slash"></i>';
+                });
+            }
+            
+            // Botón de prueba de backend
+            if (testBackendBtn) {
+                testBackendBtn.addEventListener('click', testBackendConnection);
+            }
+            
+            // Envío del formulario
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                await testLogin();
+            });
+        }
+
+        // Mostrar notificación
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            
+            // Configurar notificación
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            // Ocultar después de 5 segundos
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 5000);
+        }
+
+        // Establecer estado de loading
+        function setLoading(isLoading, buttonId = 'loginButton') {
+            const button = document.getElementById(buttonId);
+            const buttonText = button.querySelector('#buttonText') || button;
+            const loader = button.querySelector('.loader');
+            
+            if (!button) return;
+            
+            button.disabled = isLoading;
+            
+            if (loader) {
+                if (isLoading) {
+                    if (buttonText.id === 'buttonText') {
+                        buttonText.style.display = 'none';
+                    }
+                    loader.style.display = 'block';
+                } else {
+                    if (buttonText.id === 'buttonText') {
+                        buttonText.style.display = 'block';
+                    }
+                    loader.style.display = 'none';
+                }
+            }
+        }
+
+        // Función para abrir consola de debugging
+        window.debugInfo = function() {
+            console.log('=== DEBUG INFO ===');
+            console.log('URL actual:', window.location.href);
+            console.log('Protocolo:', window.location.protocol);
+            console.log('Backend URL:', API_BASE_URL);
+            console.log('LocalStorage:', { ...localStorage });
+            console.log('User agent:', navigator.userAgent);
+            console.log('=== END DEBUG ===');
+            
+            // Probar conexión manualmente
+            testBackendConnection();
+        };
+        
+        // Exponer funciones para consola
+        window.testBackend = testBackendConnection;
+        window.testLogin = testLogin;
+        
+        // Mensaje de ayuda
+        console.log('📋 Para debugging, usa:');
+        console.log('- debugInfo() para ver información');
+        console.log('- testBackend() para probar conexión');
+        console.log('- testLogin() para probar login');
+    </script>
+</body>
+</html>
