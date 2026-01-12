@@ -16,4 +16,10 @@ public class HomeController {
     public String redirectToIndex() {
         return "forward:/index.html";
     }
+
+    // Endpoint de salud para Render
+    @GetMapping("/health")
+    public String health() {
+        return "OK";
+    }
 }
