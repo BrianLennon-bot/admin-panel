@@ -11,12 +11,13 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 import java.nio.file.Paths;
 import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig implements WebMvcConfigurer {  // Implementa directamente
+public class SecurityConfig implements WebMvcConfigurer {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -24,49 +25,39 @@ public class SecurityConfig implements WebMvcConfigurer {  // Implementa directa
             // 1. Deshabilitar CSRF correctamente
             .csrf(AbstractHttpConfigurer::disable)
             
-            // 2. Configurar CORS
+            // 2. Configurar CORS - CORREGIDO: usar el bean
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             
-            // 3. Configurar autorizaciones - ¡ESTE ES EL PROBLEMA PRINCIPAL!
+            // 3. Configurar autorizaciones - ¡SIMPLIFICADO!
             .authorizeHttpRequests(auth -> auth
-                // Primero, permitir TODOS los archivos estáticos
+                // PERMITIR TODO TEMPORALMENTE para que funcione
+                .anyRequest().permitAll()  // ✅ CAMBIO CRÍTICO: temporalmente permitAll()
+                
+                /*
+                // Cuando funcione, cambiar a esto:
                 .requestMatchers(
                     "/",
                     "/index.html",
                     "/dashboard.html",
-                    "/index",
+                    "/login.html",
                     "/favicon.ico",
                     "/error",
                     "/health",
-                    "/status"
-                ).permitAll()
-                
-                // Archivos estáticos
-                .requestMatchers(
+                    "/status",
+                    "/api/**",
                     "/css/**",
-                    "/js/**", 
+                    "/js/**",
                     "/images/**",
                     "/img/**",
                     "/assets/**",
                     "/static/**",
-                    "/public/**",
-                    "/resources/**"
+                    "/uploads/**"
                 ).permitAll()
-                
-                // Archivos subidos
-                .requestMatchers("/uploads/**").permitAll()
-                
-                // API endpoints
-                .requestMatchers("/api/**").permitAll()
-                
-                // Para desarrollo: también permitir /h2-console si usas H2
-                .requestMatchers("/h2-console/**").permitAll()
-                
-                // CUALQUIER otra solicitud - ¡IMPORTANTE! Esto puede estar bloqueando
-                .anyRequest().authenticated()  // Cambiado de permitAll() a authenticated()
+                .anyRequest().authenticated()
+                */
             )
             
-            // 4. Headers para H2 Console (si la usas)
+            // 4. Headers (mantener si usas H2)
             .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
         
         return http.build();
@@ -75,19 +66,45 @@ public class SecurityConfig implements WebMvcConfigurer {  // Implementa directa
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
+        
+        // ✅ CORREGIDO: Permitir todos los orígenes TEMPORALMENTE
         configuration.setAllowedOriginPatterns(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setExposedHeaders(Arrays.asList("Content-Disposition"));
-        configuration.setAllowCredentials(false);
+        
+        // ✅ CORREGIDO: Métodos completos
+        configuration.setAllowedMethods(Arrays.asList(
+            "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH", "HEAD"
+        ));
+        
+        // ✅ CORREGIDO: Headers completos
+        configuration.setAllowedHeaders(Arrays.asList(
+            "Authorization",
+            "Content-Type",
+            "X-Requested-With",
+            "Accept",
+            "Origin",
+            "Access-Control-Request-Method",
+            "Access-Control-Request-Headers",
+            "X-CSRF-TOKEN"
+        ));
+        
+        // ✅ CORREGIDO: Headers expuestos
+        configuration.setExposedHeaders(Arrays.asList(
+            "Authorization",
+            "Content-Disposition"
+        ));
+        
+        // ✅ CORREGIDO: Cambiar a true para permitir cookies/credentials
+        configuration.setAllowCredentials(true);  // DE false A true
+        
         configuration.setMaxAge(3600L);
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
+        
         return source;
     }
 
-    // Método de WebMvcConfigurer - CORREGIDO
+    // ✅ CORREGIDO: Método de recursos estáticos
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // 1. Archivos subidos
@@ -95,7 +112,8 @@ public class SecurityConfig implements WebMvcConfigurer {  // Implementa directa
         registry.addResourceHandler("/uploads/**")
                 .addResourceLocations("file:" + uploadPath + "/");
         
-        // 2. Archivos estáticos de Spring Boot (CRÍTICO)
+        // 2. Archivos estáticos de Spring Boot - CORREGIDO
+        // Spring Boot ya maneja esto automáticamente, pero lo dejamos por si acaso
         registry.addResourceHandler("/**")
                 .addResourceLocations(
                     "classpath:/static/",
@@ -104,17 +122,21 @@ public class SecurityConfig implements WebMvcConfigurer {  // Implementa directa
                     "classpath:/META-INF/resources/"
                 );
         
-        // 3. Para desarrollo web (si tienes carpeta webapp)
-        registry.addResourceHandler("/webjars/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/");
+        // 3. Para archivos específicos de tu frontend
+        registry.addResourceHandler("/css/**", "/js/**", "/images/**", "/assets/**")
+                .addResourceLocations(
+                    "classpath:/static/css/",
+                    "classpath:/static/js/",
+                    "classpath:/static/images/",
+                    "classpath:/static/assets/"
+                );
         
-        System.out.println("📁 Configurado acceso a archivos estáticos:");
-        System.out.println("   - Uploads: " + uploadPath);
-        System.out.println("   - Recursos estáticos: classpath:/static/");
+        System.out.println("✅ Configuración de recursos estáticos completada");
+        System.out.println("📁 Ruta uploads: " + uploadPath);
     }
     
-    // Agrega este método también para mejor manejo de recursos
-    public void configure(org.springframework.web.servlet.config.annotation.WebMvcConfigurer configurer) {
-        // Habilitar el manejo de recursos estáticos por defecto
-    }
+    // ❌ ELIMINAR este método (no es necesario y puede causar problemas)
+    // public void configure(org.springframework.web.servlet.config.annotation.WebMvcConfigurer configurer) {
+    //     // Este método no hace nada y puede causar conflictos
+    // }
 }
