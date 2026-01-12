@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api")  // ✅ Ruta base /api
 public class ApiController {
     
     @GetMapping("/welcome")
@@ -19,12 +19,25 @@ public class ApiController {
         return ResponseEntity.ok(response);
     }
     
+    // ✅ ÚNICO método /test en toda la aplicación
     @GetMapping("/test")
     public ResponseEntity<?> test() {
-        return ResponseEntity.ok(Map.of(
-            "status", "ok",
-            "message", "API funcionando"
-        ));
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "ok");
+        response.put("message", "API funcionando");
+        response.put("timestamp", new Date().toString());
+        response.put("endpoint", "/api/test");
+        return ResponseEntity.ok(response);
+    }
+    
+    // ✅ ÚNICO método /health en toda la aplicación
+    @GetMapping("/health")
+    public ResponseEntity<?> health() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "OK");
+        response.put("service", "admin-panel-api");
+        response.put("timestamp", new Date().toString());
+        return ResponseEntity.ok(response);
     }
     
     // Endpoint catch-all para APIs no encontradas
@@ -33,6 +46,13 @@ public class ApiController {
         Map<String, Object> response = new HashMap<>();
         response.put("error", "Endpoint API no encontrado");
         response.put("timestamp", new Date().toString());
+        response.put("suggestions", new String[]{
+            "GET  /api/welcome",
+            "GET  /api/test", 
+            "GET  /api/health",
+            "GET  /api/auth/test",
+            "POST /api/auth/login"
+        });
         return ResponseEntity.status(404).body(response);
     }
 }
