@@ -9,6 +9,6 @@ public class SecurityBeansConfig {
     
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(12); // Cost factor 12
+        return new BCryptPasswordEncoder(10); // Cost factor 12
     }
 }
